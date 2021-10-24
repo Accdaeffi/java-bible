@@ -1,0 +1,26 @@
+SOLID - принципы дизайна классов.
+Вообще, их 5, но если сильно постараться, то можно найти побольше. Правда проблема в том, что их писали программисты на C++... Но хуже от этого быть не должно.
+
+10 заповедей ООП (ну или не 10, изначально было 21).
+1) Для каждой библиотеки - свой класс-прослойка.
+2) Множество return - только для дебаггинга (дебаггер в помощь) и возврата кода ошибок (кастомные ошибки). (Т.е. это грех в Java)
+3) Классы (интерфейсы, модули...) должны быть открыты для расширения, но закрыты для модификации. (Open-Closed Principle).
+4) Классы-наследники должны быть способны использоваться там, где подходит их предок (Liskov Substitution Principle).
+5) Детали должны зависеть от абстракций, но не наоборот (Dependency Inversion Principle).
+6) Единица переиспользуемости должна быть равна единице релиз. Только компоненты, релиз которых отмечен в системе отслеживания, должны быть использованы.
+7) Классы в одной единице релиза должны использоваться все вместе - иначе их можно разделить на несколько единиц переиспользуемости.
+8) Структура зависимостей должна быть DAG - ориентированный ациклический граф.
+9) Чем глубже код в структуре зависимостей - тем стабильнее он должен быть.
+10) Если есть возможность - надо использовать паттерны.
+11) При пересечении 2 парадигм программирования - следует создать интерфейс между ними. Не стоит засорять одну парадигму другой.
+
+SOLID и все-все-все.
+
+Источники: 
+Полилог об общих принципах ООП (10 заповедей ООП): https://groups.google.com/g/comp.object/c/WICPDcXAMG8?hl=en&pli=1#adee7e5bd99ab111
+
+Single Responsibility Principle: https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view?resourcekey=0-AbuGpXQzwZcUGExkktKt0g
+Open-Closed Principle: https://drive.google.com/file/d/0BwhCYaYDn8EgN2M5MTkwM2EtNWFkZC00ZTI3LWFjZTUtNTFhZGZiYmUzODc1/view?resourcekey=0-FsS837CGML599A_o5D-nAw
+Liskov Substitution Principle: https://drive.google.com/file/d/0BwhCYaYDn8EgNzAzZjA5ZmItNjU3NS00MzQ5LTkwYjMtMDJhNDU5ZTM0MTlh/view?resourcekey=0-WMUrDARPkqqsxNNdno6ksw
+Interface Segregation Principle: https://drive.google.com/file/d/0BwhCYaYDn8EgOTViYjJhYzMtMzYxMC00MzFjLWJjMzYtOGJiMDc5N2JkYmJi/view?resourcekey=0-3H2Ld4l-dIZZVRmHSpNLcA
+Dependency Inversion Principle: https://drive.google.com/file/d/0BwhCYaYDn8EgMjdlMWIzNGUtZTQ0NC00ZjQ5LTkwYzQtZjRhMDRlNTQ3ZGMz/view?resourcekey=0-jRJy8Mi4CltX8KX84BqLFQ
