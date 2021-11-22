@@ -76,8 +76,6 @@ Java Naming Convention:
 Пакеты:
 1) Импорт пакетов лучше без звёздочки - по крайней мере, если нет ЧЁТКОЙ уверенности, что вот вообще все классы из пакета будут использованы.
 
-Если это грязно, но это улучшит качество кода - сделай это.
-
 
 Источники:
 Java Code Convention: https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html
