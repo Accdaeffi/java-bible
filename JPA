@@ -13,7 +13,7 @@ Bidirectional - по умолчанию.
 @OneToMany/@ManyToOne - на стороне Many
 @ManyToMany - используется 'mappedBy', чтобы понять, где именно лежит внешний ключ
 
-JPA Cascade (по умолчанию они все выключены)
+JPA Cascade (по умолчанию они все выключены) (пишутся в @XToX)
 PERSIST - при сохранении
 MERGE - при слиянии
 REFRESH - при обновлении
@@ -33,3 +33,14 @@ ALL - все
 Создание и обновление меток времени.
 JPA: @PrePersist и @PreUpdate
 Hibernate: @CreationTimestamp и @UpdateTimestamp
+
+Аннотации полей:
+@Lob - для больших объектов, чтобы сделалось CLOB или BLOB.
+@Enumerated(value = EnumType.*) - для Enum. Либо Ordinal (дефолт) (сохраняет номер значения в enum), либо String (сохраняет строку enum).
+
+@OneToOne - просто приделать, само разберётся.
+@OneToMany - приделать + добавить mappedBy, указав поле обратной ссылки. Можно подумать о каскаде.
+@ManyToOne - просто написать.
+@ManyToMany - приделать к каждому Set/List. На поле не-владельца написать mappedBy с полем ссылки. 
+       Для красоты на владельце - @JoinTable(name = "test_foo", joinColumns = @JoinColumn("test_id"), inverseJoinColumns = @JoinColumn("foo_id"))
+
