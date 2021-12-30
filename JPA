@@ -1,0 +1,35 @@
+4 типа отношений и их fetch type (по JPA 2.1):
+@OneToOne - Eager
+@OneToMany - Lazy
+@ManyToOne - Eager
+@ManyToMany - Lazy
+
+2 типа связи:
+Uniderictional - одна сторона не знает о связи. Не быстрее, весьма специфично.
+Bidirectional - по умолчанию.
+
+Владеющая сторона (та, у которой будет лежать внешний ключ):
+@OneToOne - та, у которой указан внешний ключ
+@OneToMany/@ManyToOne - на стороне Many
+@ManyToMany - используется 'mappedBy', чтобы понять, где именно лежит внешний ключ
+
+JPA Cascade (по умолчанию они все выключены)
+PERSIST - при сохранении
+MERGE - при слиянии
+REFRESH - при обновлении
+REMOVE - при удалении
+DETACH - при отключении
+ALL - все
+
+Встроенные типы. 
+Они есть - и могут использоваться в разных классах. Пример - адрес может быть как у доставки, так и у человека, так и у склада.
+
+Наследования (ORM)
+@MappedSuperclass – вешается на классы-предки, они не мапятся, в потомков встроены все их поля
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) – на всё семейство - одна таблица. Куча null прилагается. Колонка-дискриминатор - тоже.
+@Inheritance(strategy = InheritanceType.JOINED) – каждому классу свою таблицу со своими полями + общим Id. Если надо - то с помощью JOIN собирается нужный объект. Дорого по времени.
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) – похоже на MappedSuperclass, но предок тоже мапится. Использует UNION и проблемы с генерации Id.
+
+Создание и обновление меток времени.
+JPA: @PrePersist и @PreUpdate
+Hibernate: @CreationTimestamp и @UpdateTimestamp
