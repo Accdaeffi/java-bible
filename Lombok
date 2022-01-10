@@ -1,0 +1,15 @@
+Круто, полезно.
+
+@NonNull - сам кидает NPE, если null.
+@Cleanup - автоматически делает close() на ресурс в блоке finally.
+@ToString - делает для класса toString метод.
+@EqualsAndHashCode - делает equals и hashCode.
+@Data - позволяет не писать @Getter и @Setter к каждому полю. Также генерирует конструкторы, если они не заданы прямо. 
+@Value - immutable вариант @Data, все поля private и final.
+@Builder - генерирует Builder паттерн.
+@SneakyThrows - вписывает в методы throws вместо тебя.
+@Synchronized - чуть более безопасная (и, возможно, медленная) версия ключевого слова synchronized
+@Log - создаёт java.util логгер.
+@Slf4j - создаёт SLF4J логгер.
+
+Можно написать @Getter(lazy=true), чтобы включить кэширование для некоторых сложных гетеров.
