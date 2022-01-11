@@ -33,6 +33,9 @@ PATCH - частично модифицирует указанный ресур�
   400 - Bad request
   401 - Not authorized
   404 - Not found
+  405 - Method not allowed
+  409 - Conflict (возможно, одновременные обновления)
+  417 - Expectation failed (иногда используется в RESTful).
 5** - ошибки сервера
   500 - Internal server error
   503 - Service unavailable
