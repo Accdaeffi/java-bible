@@ -1,0 +1,26 @@
+Java Bean Validation (JSR-303)
+@Null - проверяет, что значение null
+@NotNull - проверяет, что значение не null
+@AssertTrue и @AssertFalse - что значение true или же false
+@Min и @Max - что значение больше либо равно или же что меньше либо равно
+@DecimalMin и @DecimalMax - что больше или же что меньше
+@Negative, @NegativeOrZero, @Positive, @PositiveOrZero - очевидно
+@Size - проверяет, что размер строки или коллекции между двумя границами
+@Digits - проверяет, какой длины у числа целая часть и дробная часть
+@Past, @PastOrPresent, @Future, @FutureOrPresent - сравнение дат
+@Pattern - сравнение с регуляркой
+@NotEmpty - проверяет, что значение не null и не пустое
+@NotBlank - проверяет, что строка не null и не состоит из пробелов
+@Email - проверяет, что строка - корректный email
+
+Аннотации вешаются на поля.
+Позднее, где это надо, на объект (например, входной параметр метода) вешается @Valid, а в сигнатуру метода добавляется BindingResult - где и будут результаты валидации.
+
+В properties можно указать имени полей (class.foo=Bar), а так же сообщения при ошибках. Приоритет этих сообщений следующий:
+1) code.objectName.fieldName - NotBlank.class.foo=Пустота!
+2) code.fieldName - NotBlank.foo=Менее приоритетная пустота!
+3) code.fieldType - NotBlank.java.lang.String=Строковая пустота! Ещё менее приоритетная!
+4) code - Size={0} must be between {1} and {2} characters long!
+
+Список литературы
+https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-builtin-constraints - про аннотации (и дополнительные Hibernate)
