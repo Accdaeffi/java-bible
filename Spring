@@ -73,6 +73,31 @@ SimpleMappingExceptionResolver - позволяет при указанных и
 
 
 
+WebFlux
+Альтернатива WebMVC для упора в реактивность. Работает на Netty контейнере, вместо сервлетов - потоки.
+Все сервлеты не работают, WebMVC - тоже. Контроллеры, кстати, вроде пашут.
+
+ModelAndView не работает, а вот Model - спокойно.
+
+Для валидации - тот же самый @Valid, только выглядит вот так
+public Mono<String> saveOrUpdate(@Valid @ModelAttribute("recipe") Mono<RecipeCommand> command) {
+    return command
+        // нормальное поведение
+        .flatMap(recipeService::saveRecipeCommand)
+        .map(recipe -> "redirect:/recipe/" + recipe.getId() + "/show")
+        // вылезает при ошибке 
+        .doOnError(thr -> log.error("Error saving recipe"))
+        .onErrorResume(WebExchangeBindException.class, thr -> Mono.just(RECIPE_RECIPEFORM));
+}
+
+RouterFunction позволяет отдельно настроить, что возвращают некоторые запросы. Оформляется как @Bean в классе конфигов.
+(хз вообще, зачем, но ладно) Полезно для создания api.
+
+WebTestClient можно использовать для тестирования.
+Забиваются все параметры, потом .exchange() для осуществления запроса и куча .expect*() для проверки.
+
+
+
 i18n 
 По-дефолту - берутся из Accpet-language пришедшего заголовка HTTP. 
 Но, если сильно надо, можно использоваться FixedLocaleResolver (берёт из настроек JVM), а также CookieLocaleResolver (из печенек) или SessionLocaleResolver (из парамтеров сессии).
