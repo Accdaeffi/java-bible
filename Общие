@@ -76,6 +76,9 @@ Java Naming Convention:
 Пакеты:
 1) Импорт пакетов лучше без звёздочки - по крайней мере, если нет ЧЁТКОЙ уверенности, что вот вообще все классы из пакета будут использованы.
 
+Веб:
+1) Лучше сделать раздельные классы для хранения в БД и для передачи на фронт. Для маппинга можно использовать MapStruct.
+
 
 Источники:
 Java Code Convention: https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html
