@@ -72,6 +72,16 @@ SimpleMappingExceptionResolver - позволяет при указанных и
 При тестировании через MockMVC, правда, его надо указывать напрямую - через .setControllerAdvice. 
 
 
+Content Negotiation View Resolver
+Определяет, к какому именно view стучаться - к html? к pdf? к xml?
+Вообще и само по себе неплохо работает. 
+
+Позволяет клиентам самим решать, выгружать ли им данные в json или же xml, например. Нужны библиотеки, чтобы подключить новый типы, например, xml.
+Работает на основе Accept в HTTP Header.
+Если попытаться попросить то, чего нет - кинет 406 Not Acceptable.
+
+При тестировании придётся указывать, какой именно тип View мы хотим получить. Да и просто при запросах.
+
 
 WebFlux
 Альтернатива WebMVC для упора в реактивность. Работает на Netty контейнере, вместо сервлетов - потоки.
@@ -89,6 +99,11 @@ public Mono<String> saveOrUpdate(@Valid @ModelAttribute("recipe") Mono<RecipeCom
         .doOnError(thr -> log.error("Error saving recipe"))
         .onErrorResume(WebExchangeBindException.class, thr -> Mono.just(RECIPE_RECIPEFORM));
 }
+
+Для того, чтобы сервак принимал реактивный объект (например, для REST полезно), можно сделать:
+methodName (@RequestBody Publishier<CLASS> ClassStream)
+А потом, например, чтобы сохранить:
+return repository.saveAll(ClassStream).then()
 
 RouterFunction позволяет отдельно настроить, что возвращают некоторые запросы. Оформляется как @Bean в классе конфигов.
 (хз вообще, зачем, но ладно) Полезно для создания api.
