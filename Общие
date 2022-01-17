@@ -78,7 +78,7 @@ Java Naming Convention:
 
 Веб:
 1) Лучше сделать раздельные классы для хранения в БД и для передачи на фронт. Для маппинга можно использовать MapStruct.
-
+2) При создании API лучше прописать версию - т.е. путь будет не /api/foo, а /api/v1/foo. Позволит создавать новую версию API, не словам имеющимся клиентам ничего.
 
 Источники:
 Java Code Convention: https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html
