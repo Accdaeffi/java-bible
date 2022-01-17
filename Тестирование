@@ -24,7 +24,7 @@ JSONassert и JSONPath - для работы с JSON, утверждений и 
 @TestConfiguration - местная конфигурация
 @MockBean и @SpyBean - бины от Mockito
 @JsonTest - создаёт Jackson или Gson object wrapper.
-@WebMvcTest - использует контекст веба, но не создаёт полноценный http сервер.
+@WebMvcTest(controllers = {ControllerToTest.class}) - использует контекст веба, но не создаёт полноценный http сервер. 
 @DataJpaTest, @JdbcTest и @DataMongoTest - для тестирования уровня доступа к бд.
 @RestClientTest - создаёт mock сервера для тестирования rest клиентов.
 @BootStrapWith - указывает, как запускать контекст
@@ -43,6 +43,8 @@ JSONassert и JSONPath - для работы с JSON, утверждений и 
 2) Написать MockitoAnnotations.initMocks(this).
   2.1) Если надо воткнуть его в соответствующие поля тестируемого объекта - можно просто приписать к этому объекту @InjectMocks. 
 3) Написать Mockito.when(объект.метод()).thenReturn(что возвращать).
+
+А ещё можно написать @MockBean и само всё сделается и вставится куда надо (только Spring).
 
 Mockito.verify
 Используется, чтобы проверить что-то про Mock - например, что определённый метод был вызван лишь 1 раз.
