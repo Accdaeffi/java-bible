@@ -93,8 +93,9 @@ public Mono<String> saveOrUpdate(@Valid @ModelAttribute("recipe") Mono<RecipeCom
 RouterFunction позволяет отдельно настроить, что возвращают некоторые запросы. Оформляется как @Bean в классе конфигов.
 (хз вообще, зачем, но ладно) Полезно для создания api.
 
-WebTestClient можно использовать для тестирования.
+WebTestClient можно использовать для тестирования. 
 Забиваются все параметры, потом .exchange() для осуществления запроса и куча .expect*() для проверки.
+Создание: WebTestClient.bindToController(ControllerToTest.class).build();
 
 
 
