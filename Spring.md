@@ -91,6 +91,7 @@ SimpleMappingExceptionResolver - позволяет при указанных и
 ModelAndView не работает, а вот Model - спокойно.
 
 Для валидации - тот же самый @Valid, только выглядит вот так
+```java
 public Mono<String> saveOrUpdate(@Valid @ModelAttribute("recipe") Mono<RecipeCommand> command) {
     return command
         // нормальное поведение
@@ -100,6 +101,7 @@ public Mono<String> saveOrUpdate(@Valid @ModelAttribute("recipe") Mono<RecipeCom
         .doOnError(thr -> log.error("Error saving recipe"))
         .onErrorResume(WebExchangeBindException.class, thr -> Mono.just(RECIPE_RECIPEFORM));
 }
+```
 
 Для того, чтобы сервак принимал реактивный объект (например, для REST полезно), можно сделать:
 methodName (@RequestBody Publishier<CLASS> ClassStream)
@@ -135,6 +137,7 @@ WebClient - позволяет делать запросы куда надо. О
 А ещё заменить импорт MockMVCRequestBuilders на RestDocumentationRequestBuilders.
 К mockMvc после .andExpect() надо приделать .andDo() с различными параметрами, как и что описывать.
 
+```java
 .andDo(document("id запроса", 
   pathParameters(
     parameterWithName("name").description("desc")
@@ -150,6 +153,7 @@ WebClient - позволяет делать запросы куда надо. О
     fieldWithPath("ignField").ignored(),
     fieldWithPath("field").desription("desc3butanother")
   )));
+```
 
 Можно ещё сделать автодобавление ограничений - но потребуется создавать образец в test.java.resources.org.springframework.restdocs.templates 
 и свой кастомный метод, возвращающий FieldDesriptor. Но это довольно сложно. Можно похимчить с https://scacap.github.io/spring-auto-restdocs/.
@@ -200,7 +204,74 @@ WebClient - позволяет делать запросы куда надо. О
   
 Для логирования: org.springframework.transaction=TRACE
   
- 
+# Security
+Безопасность, все дела.
+У пользователя должны быть настроены роли.
+    
+Включение вебовской защиты:
+```java
+@EnableWebSecurity
+@EnableOAuth2Sso
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.requestMatchers()
+            .antMatchers("/login", "/oauth/authorize")
+            .and()
+            .authorizeRequests()
+            .anyRequest().authenticated()
+            .and()
+            .formLogin().permitAll();
+    }
+```
+    
+Получение юзеров из бд: либо автополучение из дефолтной схемы (довольно грустная), либо надо прямо указывать, что и как запрашивать. Пример:
+```java
+public void configureGlobal(AuthenticationManagerBuilder auth) 
+  throws Exception {
+    auth.jdbcAuthentication()
+      .dataSource(dataSource)
+      .usersByUsernameQuery("select email,password,enabled "
+        + "from bael_users "
+        + "where email = ?")
+      .authoritiesByUsernameQuery("select email,authority "
+        + "from authorities "
+        + "where email = ?");
+}
+```
+    
+## Защита от CSRF
+CSRF - это когда стучатся прямым запросом по API вместо нормального использования нужной формы. Опасно, особенно для любителей не выходить из сайтов.
+Мера защиты - специальное секретное поле с уникальным секретным ключом, который отправляется вместе с формой, так что наш сайт легко получит. А вот вредоносный - нет. По традиции, поле с этим ключом называется _csrf.
+Защищать надо всё, кроме тех запросов, которые идут напрямую от клиентов (т.е. API). Даже те, которые из JSON.
+    
+Защита:
+1. Нормальные HTTP глаголы. Чтобы лишь PUT, POST, PATCH и DELETE могли что-то изменять.
+2. Включить в фреймворке (в Spring Security 4.0) по умолчанию включена.
+3. Добавить в запрос. 
+    1. Форма: В Thymeleaf и Spring MVC <form:form> само, в остальных - надо добавить 
+    ```html
+    <input type="hidden"
+	    name="${_csrf.parameterName}"
+	    value="${_csrf.token}"/>
+    ```
+    2. JSON: прописать в head странички
+    ```html    
+    <meta name="_csrf" content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+    ````
+    3. AJAX
+    ```javascript
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+	    xhr.setRequestHeader(header, token);
+    ```
+    
+С фалйлами отдельное веселье.
+    
+    
 
 # i18n 
 По-дефолту - берутся из Accpet-language пришедшего заголовка HTTP. 
