@@ -210,3 +210,5 @@ WebClient - позволяет делать запросы куда надо. О
 
 # Литература:
 https://spring.io/projects/spring-restdocs - RESTdocs 
+https://www.baeldung.com/spring-transactional-propagation-isolation - транзакции
+https://akorsa.ru/2017/01/sovety-i-oshibki-v-spring-transactions/ - транзакции
