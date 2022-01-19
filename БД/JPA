@@ -1,4 +1,4 @@
-4 типа отношений и их fetch type (по JPA 2.1):
+4 типа отношений и их fetch type по умолчанию (по JPA 2.1):
 @OneToOne - Eager
 @OneToMany - Lazy
 @ManyToOne - Eager
@@ -23,6 +23,7 @@ ALL - все
 
 Встроенные типы. 
 Они есть - и могут использоваться в разных классах. Пример - адрес может быть как у доставки, так и у человека, так и у склада.
+Насколько я понял - у главного класса на сет или лист со встроенным типом вешается @ElementCollection и @CollectionTable(name = "foo", joinColumns = @JoinColumns(name = "embedded_to_main_id")) 
 
 Наследования (ORM)
 @MappedSuperclass – вешается на классы-предки, они не мапятся, в потомков встроены все их поля
