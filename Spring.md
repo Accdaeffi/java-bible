@@ -247,7 +247,7 @@ CSRF - это когда стучатся прямым запросом по API
     
 Защита:
 1. Нормальные HTTP глаголы. Чтобы лишь PUT, POST, PATCH и DELETE могли что-то изменять.
-2. Включить в фреймворке (в Spring Security 4.0) по умолчанию включена.
+2. Включить в фреймворке (в Spring Security 4.0 по умолчанию включён). Отлключение, кстати, через настройку HttpSecurity в виде `http.csrf().disable()`.
 3. Добавить в запрос. 
     1. Форма: В Thymeleaf и Spring MVC <form:form> само, в остальных - надо добавить 
     ```html
@@ -271,13 +271,53 @@ CSRF - это когда стучатся прямым запросом по API
     
 С фалйлами отдельное веселье.
     
-    
-
+## Security Spring Cloud
+Надо, полезно, но не панацея и стоит делать что-то дополнительно (например, не ходить в базу от рута).
+	
+Зашифрованные параметры хранятся как {cipher}<encrypted value>:
+```
+	spring.datasource.password=hello
+	spring.datasource.password={cipher}ewere32434r32f23
+```
+	
+Требует установки симметричного ключа в поле переменную encrypt.key - иначе сломается. Желательно устанавливать в ENV, но, если безопасность не важна - в bootstrap.properties.
+Можно сделать и ассиметричное, но надо уже копаться в документации.
+	
+Для закодирования - стучаться через POST в /encrypt, для раскодирования - в /decrypt.
+	
+Для микросервисного защиты API:
+На сервере - `spring.security.user.name` и `spring.security.user.password`, на клиенте - `spring.cloud.config.username` и `spring.cloud.config.password`. Опять же, лучше через ENV.
+	
+Если настроить базовую аутентификацию, то, чтобы стучаться по REST, надо в клиенте в RestTemplate прописать юзера и пароль, например, через RestTemplateBuilder.basicAuthentication().
+	
 # i18n 
 По-дефолту - берутся из Accpet-language пришедшего заголовка HTTP. 
 Но, если сильно надо, можно использоваться FixedLocaleResolver (берёт из настроек JVM), а также CookieLocaleResolver (из печенек) или SessionLocaleResolver (из парамтеров сессии).
 
 Файлы локализации берутся в порядке - полное совпадение, только язык, какое-то дефолтное (без указания локализации).
+	
+# State Machine
+Состояния и типы событий записываются в Enum.
+	
+Создаётся конфиг с аннотацией @EnableStateMachineFactory, наследующийся от StateMachineConfigurerAdapter<StatesEnum, EventsEnum>.
+В конфиге перезаписывается метод configure(), получающий на вход StateMachineStateConfigurer states в виде:
+```java
+	states.withStates()
+		.initial(StatesEnum.NEW)
+		.states(EnumSet.allOf(StatesEnum.class))
+		.end(StatesEnum.FINISH)
+		.end(StatesEum.ANOTHER_FINISH);
+```
+Так же там перезаписывается метод configure(), получающий на вход StateMachineTransitionConfigurer transitions в виде:
+```java
+	transitions.withExternal().source(StatesEnum.SOURCE_STATE).target(StatesEnum.TARGET_STATE).event(EventsEnum.CHANGE_STATE)
+		.and
+		.withExternal().source(StatesEnum.TARGET_STATE).target(StatesEnum.FINISH_STATE).event(EventsEnum.CHANGE_STATE_TO_FINISH);
+		
+```	
+
+Для логирования в конфиге надо переписать метод configure(), получающий на вход StateMachineConfigurationConfigurer config, создав там StateMachineListenerAdapter adapter с переопределённым методом stateChanged (указав там логирование) и написав в конце config.withConfiguration().listener(adapter);
+
 
 # Литература:
 https://spring.io/projects/spring-restdocs - RESTdocs 
