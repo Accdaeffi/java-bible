@@ -312,13 +312,29 @@ CSRF - это когда стучатся прямым запросом по API
 ```java
 	transitions.withExternal().source(StatesEnum.SOURCE_STATE).target(StatesEnum.TARGET_STATE).event(EventsEnum.CHANGE_STATE)
 		.and
-		.withExternal().source(StatesEnum.TARGET_STATE).target(StatesEnum.FINISH_STATE).event(EventsEnum.CHANGE_STATE_TO_FINISH);
+		.withExternal().source(StatesEnum.TARGET_STATE).target(StatesEnum.FINISH_STATE).event(EventsEnum.CHANGE_STATE_TO_FINISH).action(actionMethod()).guard(guardMethod());
 		
 ```	
+Action - это событие, которое выполняется при определённых условиях, например, при получени ивента в определённом состоянии. Метод события висит в том же конфиге и выглядит как return context -> {*logic*}. 
+	
+Guard - некий валидатор, позволяющий понять, какие события стоит отбрасывать, а на какие нормально реагировать. Метод выглядит примерно так: return context -> {*logic returning bool*}.
 
 Для логирования в конфиге надо переписать метод configure(), получающий на вход StateMachineConfigurationConfigurer config, создав там StateMachineListenerAdapter adapter с переопределённым методом stateChanged (указав там логирование) и написав в конце config.withConfiguration().listener(adapter);
 
-
+Для работы - создаются методы, которые возвращают StateMachine и на которых повешено @Transactional.
+Чтобы послать ивент с машину, надо либо послать прямо (без доп инфы, глобально), либо сделать сообщение и засунуть в header кастомное поле с информацией (а потом отправить этот Message).
+	
+Вот это вот сообщение о событии перехватывается наследником StateMachineInterceptorAdapter (да, его тоже надо сделать) в методе preStateChange и обрабатывается - например, меняется состояние у нужного объекта. Только надо не забыть добавить к машине состояний этого наследника - через addStateMachineInterceptor().
+	
+Можно как-то сохранять состояние машины в БД, а потом восстанавливать, но это дорого, но можно. 
+Сохраняем в поле статуса нужного объекта, а потом: получаем объект из БД, останавливаем машину, через 
+```java
+	machine.getStateMachineAccessor()
+		.doWithAllRegions(sma -> 
+			sma.resetStateMachine(new DefaultStateMachineContext<>(STATE_FROM_DB), null, null, null)));
+```
+, а потом запускем снова и возвращаем.
+	
 # Литература:
 https://spring.io/projects/spring-restdocs - RESTdocs 
 https://www.baeldung.com/spring-transactional-propagation-isolation - транзакции
